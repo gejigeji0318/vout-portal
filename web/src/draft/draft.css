@@ -1,0 +1,850 @@
+/* 既存のドラフトシステムの styles.css を移植。ポータルの他の画面に影響しないよう、すべて .draft-root の中だけに効かせる */
+.draft-root {
+  --bg1: #12060a;
+  --bg2: #2a0d14;
+  --ink: #f6eee2;
+  --mut: #9a8c76;
+  --gold: #c9a227;
+  --gold2: #f6e6b0;
+  --line: rgba(201, 162, 39, 0.34);
+  --line-soft: rgba(255, 255, 255, 0.1);
+  --panel: rgba(255, 255, 255, 0.035);
+  --danger: #e0806e;
+  --mincho: 'Hiragino Mincho ProN', 'Yu Mincho', 'Noto Serif JP', 'MS PMincho', serif;
+  --gothic: 'Hiragino Sans', 'Noto Sans JP', 'BIZ UDPGothic', Meiryo, sans-serif;
+}
+.draft-root *, .draft-root *::before, .draft-root::before, .draft-root *::after, .draft-root::after {
+  box-sizing: border-box;
+}
+.draft-root {
+  margin: 0;
+  min-height: 100%;
+  background: var(--bg1) radial-gradient(130% 80% at 50% -10%, var(--bg2) 0%, var(--bg1) 60%) fixed;
+  color: var(--ink);
+  font-family: var(--mincho);
+  font-size: 16px;
+  line-height: 1.6;
+  font-variant-numeric: tabular-nums;
+}
+.draft-root h1, .draft-root h2, .draft-root p {
+  margin: 0;
+}
+.draft-root button {
+  font-family: var(--gothic);
+}
+.draft-root :focus-visible {
+  outline: 2px solid var(--gold2);
+  outline-offset: 3px;
+}
+.draft-root .screen {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 16px 24px 28px;
+}
+.draft-root .screen__main {
+  margin-top: 14px;
+}
+.draft-root .topbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+}
+.draft-root .topbar__round {
+  font-size: 24px;
+  font-weight: 400;
+  letter-spacing: 0.22em;
+}
+.draft-root .topbar__sub {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--gold);
+  font-family: var(--gothic);
+  font-size: 11px;
+  letter-spacing: 0.35em;
+}
+.draft-root .topbar__right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.draft-root .topbar__who {
+  color: var(--mut);
+  font-size: 14px;
+  letter-spacing: 0.1em;
+}
+.draft-root .btn {
+  padding: 9px 20px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: transparent;
+  color: var(--ink);
+  font-size: 14px;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+}
+.draft-root .btn:hover:not(:disabled) {
+  background: rgba(201, 162, 39, 0.1);
+}
+.draft-root .btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.draft-root .btn--primary {
+  border: none;
+  background: linear-gradient(180deg, var(--gold2), var(--gold));
+  color: #14100a;
+  font-weight: 700;
+}
+.draft-root .btn--primary:hover:not(:disabled) {
+  filter: brightness(1.1);
+}
+.draft-root .btn--danger {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+.draft-root .btn--sm {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+.draft-root .btn--large {
+  padding: 12px 40px;
+  font-size: 17px;
+}
+.draft-root .btn--quiet {
+  border-color: transparent;
+  color: var(--mut);
+}
+.draft-root .action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 14px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.draft-root .action-bar__message {
+  font-size: 17px;
+  letter-spacing: 0.06em;
+}
+.draft-root .action-bar__sub {
+  margin-top: 2px;
+  color: var(--mut);
+  font-family: var(--gothic);
+  font-size: 12px;
+}
+.draft-root .action-bar__buttons {
+  display: flex;
+  gap: 8px;
+}
+.draft-root .notice {
+  margin-top: 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: rgba(201, 162, 39, 0.08);
+  font-family: var(--gothic);
+  font-size: 14px;
+}
+.draft-root .notice--error {
+  border-color: var(--danger);
+  background: rgba(224, 128, 110, 0.12);
+  color: var(--danger);
+}
+.draft-root .notice ul {
+  margin: 6px 0 0;
+  padding-left: 20px;
+}
+.draft-root .center-message {
+  max-width: 560px;
+  margin: 10vh auto 0;
+  padding: 32px 28px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--panel);
+  text-align: center;
+}
+.draft-root .center-message h2 {
+  margin-bottom: 12px;
+  font-size: 22px;
+  font-weight: 400;
+  letter-spacing: 0.16em;
+}
+.draft-root .center-message p {
+  margin-bottom: 20px;
+  color: var(--mut);
+  font-size: 15px;
+  line-height: 1.9;
+}
+.draft-root .emulator-badge {
+  position: fixed;
+  left: 12px;
+  bottom: 12px;
+  padding: 4px 10px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  color: var(--gold);
+  font-family: var(--gothic);
+  font-size: 12px;
+}
+.draft-root .photo {
+  width: var(--photo-size);
+  height: calc(var(--photo-size) * 1); 
+  font-size: calc(var(--photo-size) * 0.36);
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 2px solid;
+  border-radius: 3px;
+  background: linear-gradient(160deg, #4a3b44, #241a21);
+  color: #efe6d6;
+  font-weight: 700;
+}
+.draft-root .photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.draft-root .photo--coach {
+  box-shadow: 0 0 18px -8px rgba(246, 230, 176, 0.8);
+}
+.draft-root .team-name {
+  display: block;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  white-space: pre-line; 
+  background: linear-gradient(180deg, var(--gold2), var(--gold));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  letter-spacing: 0.06em;
+  line-height: 1.3;
+}
+.draft-root .team-name--none {
+  color: var(--mut);
+  font-size: 14px;
+  letter-spacing: 0.16em;
+}
+.draft-root .cells {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+.draft-root .cell {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-height: 170px;
+  padding: 14px 18px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--panel);
+  position: relative;
+}
+.draft-root .cell::before, .draft-root .cell::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border: 1px solid var(--gold);
+  opacity: 0.65;
+}
+.draft-root .cell::before {
+  left: -1px;
+  top: -1px;
+  border-right: none;
+  border-bottom: none;
+}
+.draft-root .cell::after {
+  right: -1px;
+  bottom: -1px;
+  border-left: none;
+  border-top: none;
+}
+.draft-root .cell--clash {
+  border-color: var(--gold);
+  box-shadow: inset 0 0 40px -14px rgba(246, 230, 176, 0.75);
+}
+.draft-root .cell__side {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: 196px;
+  padding-right: 16px;
+  border-right: 1px solid var(--line);
+  text-align: center;
+}
+.draft-root .cell__team {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 74px; 
+}
+.draft-root .cell__coach {
+  font-size: 16px;
+  letter-spacing: 0.08em;
+}
+.draft-root .cell__body {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: flex-start;
+  min-width: 0;
+  padding-left: 16px;
+}
+.draft-root .cell--logo {
+  justify-content: center;
+  border-style: dashed;
+}
+.draft-root .cell--logo::before, .draft-root .cell--logo::after {
+  display: none;
+}
+.draft-root .state {
+  font-size: 18px;
+  letter-spacing: 0.16em;
+}
+.draft-root .state--ok {
+  color: var(--gold2);
+}
+.draft-root .state--wait, .draft-root .state--muted {
+  color: var(--mut);
+}
+.draft-root .reveal {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+.draft-root .reveal__role {
+  color: var(--gold);
+  font-family: var(--gothic);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+}
+.draft-root .reveal__name {
+  margin-top: 3px;
+  font-size: 28px;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+  letter-spacing: 0.04em;
+}
+.draft-root .reveal__tag {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 2px 12px;
+  border: 1px solid var(--gold);
+  border-radius: 2px;
+  color: var(--gold);
+  font-family: var(--gothic);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+}
+@media (prefers-reduced-motion: no-preference) {
+.draft-root .reveal {
+    animation: reveal-up 0.8s cubic-bezier(0.16, 0.84, 0.3, 1);
+  }
+@keyframes reveal-up {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+.draft-root .logo-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-height: 100px;
+  color: var(--mut);
+  font-size: 13px;
+  letter-spacing: 0.25em;
+}
+.draft-root .logo-cell img {
+  max-width: 100%;
+  max-height: 140px;
+  object-fit: contain;
+}
+.draft-root .rank-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 18px;
+  margin: 10px 0;
+  color: var(--mut);
+  font-family: var(--gothic);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+}
+.draft-root .rank-legend__title {
+  color: var(--gold);
+}
+.draft-root .rank-legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.draft-root .rank-legend__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+.draft-root .role-board {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-areas:
+    'top mid'
+    'jg  jg'
+    'bot sup';
+  gap: 12px;
+}
+.draft-root .role-box {
+  display: flex;
+  flex-direction: column;
+  padding: 0 12px 10px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--panel);
+}
+.draft-root .role-box--jg {
+  justify-self: center;
+  width: calc(50% - 6px);
+}
+.draft-root .role-box__title {
+  margin-bottom: 8px;
+  padding: 8px 0 7px;
+  border-bottom: 1px solid var(--line);
+  color: var(--gold);
+  font-family: var(--gothic);
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.3em;
+  text-align: center;
+}
+.draft-root .role-box__cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 8px;
+}
+.draft-root .pick-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid var(--line-soft);
+  border-radius: 3px;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--mincho);
+  cursor: pointer;
+}
+.draft-root .pick-card:hover:not(:disabled) {
+  border-color: var(--gold);
+  background: rgba(201, 162, 39, 0.07);
+}
+.draft-root .pick-card.is-selected {
+  border-color: var(--gold);
+  background: rgba(201, 162, 39, 0.14);
+  box-shadow: inset 0 0 20px -8px rgba(246, 230, 176, 0.8);
+}
+.draft-root .pick-card.is-blocked {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+.draft-root .pick-card__text {
+  min-width: 0;
+  text-align: left;
+}
+.draft-root .pick-card__name {
+  display: block;
+  font-size: 16px;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+  letter-spacing: 0.03em;
+}
+.draft-root .pick-card__note {
+  display: block;
+  min-height: 17px;
+  color: var(--mut);
+  font-family: var(--gothic);
+  font-size: 11px;
+}
+.draft-root .roulette {
+  padding: 24px 20px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--panel);
+  text-align: center;
+}
+.draft-root .roulette__target {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  font-size: 18px;
+  letter-spacing: 0.06em;
+}
+.draft-root .roulette__row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+  margin: 22px 0 16px;
+}
+.draft-root .roulette__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 200px;
+  height: 130px;
+  border: 1px solid var(--line-soft);
+  border-radius: 4px;
+  font-size: 18px;
+  letter-spacing: 0.14em;
+}
+.draft-root .roulette__card.is-lit {
+  border-color: var(--gold);
+  background: rgba(201, 162, 39, 0.16);
+  color: var(--gold2);
+}
+.draft-root .roulette__card.is-win {
+  border-color: var(--gold);
+  background: rgba(201, 162, 39, 0.2);
+  box-shadow: 0 0 36px -10px rgba(246, 230, 176, 0.6);
+}
+.draft-root .roulette__card.is-lose {
+  opacity: 0.3;
+}
+.draft-root .roulette__result {
+  min-height: 26px;
+  color: var(--mut);
+  font-size: 14px;
+  letter-spacing: 0.04em;
+}
+.draft-root .final__grid {
+  display: grid;
+  gap: 14px;
+}
+.draft-root .final__team {
+  display: flex;
+  flex-direction: column;
+  padding: 0 14px 8px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--panel);
+  position: relative;
+}
+.draft-root .final__team::before, .draft-root .final__team::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border: 1px solid var(--gold);
+  opacity: 0.65;
+}
+.draft-root .final__team::before {
+  left: -1px;
+  top: -1px;
+  border-right: none;
+  border-bottom: none;
+}
+.draft-root .final__team::after {
+  right: -1px;
+  bottom: -1px;
+  border-left: none;
+  border-top: none;
+}
+.draft-root .final__teamname {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 104px; 
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+  text-align: center;
+}
+.draft-root .final__label {
+  color: var(--gold);
+  font-family: var(--gothic);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  opacity: 0.8;
+}
+.draft-root .final__row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 2px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+.draft-root .final__row:last-child {
+  border-bottom: none;
+}
+.draft-root .final__row--coach {
+  border-bottom: 1px solid var(--line);
+}
+.draft-root .final__role {
+  color: var(--gold);
+  font-family: var(--gothic);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+}
+.draft-root .final__name {
+  margin-top: 2px;
+  font-size: 19px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+  letter-spacing: 0.03em;
+}
+.draft-root .final--compact .final__name {
+  font-size: 15px;
+}
+.draft-root .final__empty {
+  flex: none;
+}
+.draft-root .modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(8, 4, 6, 0.72);
+}
+.draft-root .modal {
+  width: min(600px, 100%);
+  max-height: 90vh;
+  overflow: auto;
+  padding: 18px 20px 22px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: #16090e;
+}
+.draft-root .modal__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.draft-root .modal__head h2 {
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+}
+.draft-root .modal__text {
+  color: var(--mut);
+  font-size: 15px;
+  line-height: 1.9;
+}
+.draft-root .modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 20px;
+}
+.draft-root .cumulative {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 14px;
+}
+.draft-root .cumulative th, .draft-root .cumulative td {
+  padding: 8px;
+  border-bottom: 1px solid var(--line-soft);
+  text-align: left;
+  font-weight: 400;
+}
+.draft-root .cumulative thead th {
+  color: var(--mut);
+  font-family: var(--gothic);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+}
+.draft-root .cumulative thead th.is-me {
+  color: var(--gold);
+}
+.draft-root .cumulative tbody th {
+  width: 70px;
+  color: var(--gold);
+  font-family: var(--gothic);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+}
+.draft-root .login {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8vh 16px 40px;
+}
+.draft-root .login__title {
+  font-size: 32px;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-indent: 0.2em;
+  background: linear-gradient(180deg, var(--gold2), var(--gold));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.draft-root .login__card {
+  width: min(420px, 100%);
+  margin-top: 24px;
+  padding: 24px 26px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--panel);
+}
+.draft-root .login__names {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0 0 18px;
+  padding: 0;
+  border: none;
+}
+.draft-root .login__names legend {
+  margin-bottom: 8px;
+  color: var(--gold);
+  font-family: var(--gothic);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+}
+.draft-root .login__name {
+  padding: 10px;
+  border: 1px solid var(--line-soft);
+  border-radius: 3px;
+  font-size: 16px;
+  letter-spacing: 0.06em;
+  text-align: center;
+  cursor: pointer;
+}
+.draft-root .login__name input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.draft-root .login__name.is-selected {
+  border-color: var(--gold);
+  background: rgba(201, 162, 39, 0.14);
+}
+.draft-root .login__name-main {
+  display: block;
+}
+.draft-root .login__name-role {
+  display: block;
+  margin-top: 2px;
+  color: var(--gold);
+  font-family: var(--gothic);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+}
+.draft-root .login__field span {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--gold);
+  font-family: var(--gothic);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+}
+.draft-root .login__field input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 3px;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--mincho);
+  font-size: 16px;
+}
+.draft-root .login__error {
+  margin-top: 10px;
+  color: var(--danger);
+  font-family: var(--gothic);
+  font-size: 13px;
+}
+.draft-root .login__submit {
+  width: 100%;
+  margin-top: 18px;
+  padding: 12px;
+}
+@media (max-width: 860px) {
+.draft-root .screen {
+    padding: 12px 12px 24px;
+  }
+.draft-root .topbar {
+    flex-wrap: wrap;
+  }
+.draft-root .cells, .draft-root .role-board {
+    grid-template-columns: minmax(0, 1fr);
+  }
+.draft-root .role-board {
+    grid-template-areas: 'top' 'jg' 'mid' 'bot' 'sup';
+  }
+.draft-root .role-box--jg {
+    width: 100%;
+  }
+.draft-root .role-box__cards {
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  }
+.draft-root .cell {
+    gap: 12px;
+    min-height: 120px;
+    padding: 12px;
+  }
+.draft-root .cell__side {
+    width: 150px;
+    padding-right: 10px;
+  }
+.draft-root .reveal .photo {
+    --photo-size: 64px;
+  }
+.draft-root .final .photo {
+    --photo-size: 52px;
+  }
+.draft-root .reveal__name {
+    font-size: 20px;
+  }
+.draft-root .action-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+.draft-root .action-bar__buttons {
+    justify-content: flex-end;
+  }
+.draft-root .roulette__card {
+    width: 140px;
+    height: 110px;
+    font-size: 15px;
+  }
+.draft-root .final__grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
+/* ポータル用の追加 */
+.draft-root { min-height: 100vh; }
+.draft-root .conn { font-family: var(--gothic); font-size: 12px; color: var(--mut); }
+.draft-root .conn--bad { color: var(--danger); }
+.draft-root .stream-url { font-family: var(--gothic); word-break: break-all; background: rgba(0,0,0,.35); padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; user-select: all; }

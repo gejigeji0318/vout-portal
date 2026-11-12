@@ -13,6 +13,9 @@ export function DevSwitcher() {
       <Container size="lg" py="sm">
         <Text size="xs" fw={700} c="#6b4e00" mb={6}>開発用：立場を切り替える（PC・テスト環境だけに表示。テスト用アカウントでログインし直します）</Text>
         <Group gap={6}>{personas.map((p) => <Button key={p.key} size="compact-xs" variant="default" onClick={() => switchTo(p.key)}>{p.label}</Button>)}</Group>
+        <Group gap={6} mt={6}>
+          <Button size="compact-xs" variant="default" color="orange" onClick={async () => { const r = await api<{ teams: number; players: number }>('POST', '/api/dev/seed-draft'); alert(`ドラフト用の見本データを用意しました（${r.teams} チーム・選手 ${r.players} 人）。コーチ（チーム1・2）と全体管理者で試せます`); }}>ドラフト用の見本データを作る</Button>
+        </Group>
       </Container>
     </Box>
   );

@@ -22,6 +22,7 @@ export function UserLayout() {
       <NavLink to="/news" style={linkStyle} onClick={close}>お知らせ</NavLink>
       {me?.loggedIn && <NavLink to="/rules" style={linkStyle} onClick={close}>ルールブック</NavLink>}
       <a href="/tools/lanes/" target="_blank" rel="noopener" style={linkStyle({ isActive: false })} onClick={close}>適性レーン ↗</a>
+      {me?.user?.membership?.memberType === 'coach' && <a href="/draft" target="_blank" rel="noopener" style={linkStyle({ isActive: false })} onClick={close}>ドラフト ↗</a>}
       {me?.loggedIn && <NavLink to="/inquiries" style={linkStyle} onClick={close}>問い合わせ</NavLink>}
     </>
   );

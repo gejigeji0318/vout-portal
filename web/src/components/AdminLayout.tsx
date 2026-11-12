@@ -33,6 +33,7 @@ export function AdminLayout() {
               <Group gap={4} component="nav" aria-label="管理メニュー">
                 <NavLink to="/admin" end style={linkStyle}>大会・メンバー管理</NavLink>
                 <NavLink to="/admin/content" style={linkStyle}>お知らせ・ページ・ツール</NavLink>
+                <a href="/admin/draft" target="_blank" rel="noopener" style={linkStyle({ isActive: false })}>ドラフト進行 ↗</a>
                 {level === 'super' && <NavLink to="/admin/system" style={linkStyle}>システム設定</NavLink>}
               </Group>
             </Group>

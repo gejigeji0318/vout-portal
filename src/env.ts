@@ -1,6 +1,7 @@
 export interface Env {
   DB: D1Database;
   IMAGES: R2Bucket;
+  DRAFT: DurableObjectNamespace<import('./draft/room').DraftRoom>;
   ENVIRONMENT: 'development' | 'test' | 'production';
   APP_ORIGIN: string;
   DISCORD_CLIENT_ID: string;

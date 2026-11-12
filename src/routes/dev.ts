@@ -79,3 +79,43 @@ devRoutes.post('/login-as', async (c) => {
   c.header('Set-Cookie', sessionCookie(token, expiresAt), { append: true });
   return c.json({ ok: true });
 });
+
+/**
+ * ドラフトを試すための見本データ（開発・テスト環境だけ）：
+ * 大会が無ければ 2 チームで作り、チーム 1・2 にテスト用コーチ、各ロール 2 人ずつのテスト用選手を用意する
+ */
+devRoutes.post('/seed-draft', async (c) => {
+  assertAvailable(c);
+  const db = c.env.DB;
+  const t = nowIso();
+  let tour = await getCurrentTournament(db);
+  if (!tour) {
+    const id = ulid();
+    await db.prepare("INSERT INTO tournaments (id, name, phase, period_start, period_end, team_count, created_at, updated_at) VALUES (?,?,'selecting',?,?,2,?,?)")
+      .bind(id, 'テスト大会', t, new Date(Date.now() + 60 * 86400e3).toISOString(), t, t).run();
+    for (let i = 0; i < 2; i++) await db.prepare('INSERT INTO teams (id, tournament_id, created_at, updated_at) VALUES (?,?,?,?)').bind(ulid(), id, new Date(Date.now() + i).toISOString(), t).run();
+    tour = (await getCurrentTournament(db))!;
+  }
+  const { results: teams } = await db.prepare('SELECT id FROM teams WHERE tournament_id = ? AND deleted_at IS NULL ORDER BY created_at').bind(tour.id).all<{ id: string }>();
+  const ensureUser = async (key: string, name: string) => {
+    let u = await db.prepare('SELECT id FROM users WHERE discord_user_id = ?').bind(`test-${key}`).first<{ id: string }>();
+    if (!u) {
+      u = { id: ulid() };
+      await db.prepare('INSERT INTO users (id, discord_user_id, discord_name, last_login_at, created_at, updated_at) VALUES (?,?,?,?,?,?)').bind(u.id, `test-${key}`, `${name}（テスト）`, t, t, t).run();
+    }
+    await db.prepare('DELETE FROM tournament_members WHERE tournament_id = ? AND user_id = ?').bind(tour!.id, u.id).run();
+    return u.id;
+  };
+  for (const [i, key] of (['coach-a', 'coach-b'] as const).entries()) {
+    const uid = await ensureUser(key, PERSONAS.find((p) => p.key === key)!.label);
+    await db.prepare("INSERT INTO tournament_members (id, tournament_id, user_id, member_type, team_id, created_at, updated_at) VALUES (?,?,?,'coach',?,?,?)").bind(ulid(), tour.id, uid, teams[i]?.id ?? null, t, t).run();
+  }
+  let n = 0;
+  for (const role of ['TOP', 'JG', 'MID', 'BOT', 'SUP']) for (let k = 1; k <= teams.length; k++) {
+    const uid = await ensureUser(`draft-${role}${k}`, `${role}${k}`);
+    await db.prepare("INSERT INTO tournament_members (id, tournament_id, user_id, member_type, draft_role, created_at, updated_at) VALUES (?,?,?,'player',?,?,?)").bind(ulid(), tour.id, uid, role, t, t).run();
+    n++;
+  }
+  await writeAudit(db, c.get('user')?.id ?? null, 'dev_seed_draft', { type: 'tournament', id: tour.id });
+  return c.json({ ok: true, tournamentId: tour.id, teams: teams.length, players: n });
+});

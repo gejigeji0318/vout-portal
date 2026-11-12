@@ -56,6 +56,7 @@ const matrix: Array<{ name: string; method: string; path: string; expected: Reco
   { name: '応募一覧（審査）', method: 'GET', path: '/api/admin/applications', expected: ADMIN_ONLY },
   { name: '仮決定表', method: 'GET', path: '/api/admin/provisional', expected: ADMIN_ONLY },
   { name: '募集要項', method: 'GET', path: '/api/recruitment', expected: EVERYONE },
+  { name: 'ドラフトの進行（管理）', method: 'GET', path: '/api/admin/draft/state', expected: ADMIN_ONLY },
   { name: 'Discord のチャンネル一覧', method: 'GET', path: '/api/admin/discord/channels', expected: SUPER_ONLY },
 ];
 

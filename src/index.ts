@@ -14,6 +14,8 @@ import { inquiryRoutes } from './routes/inquiries';
 import { homeRoutes } from './routes/home';
 import { applicationRoutes } from './routes/applications';
 import { devRoutes } from './routes/dev';
+import { draftRoutes } from './routes/draft';
+export { DraftRoom } from './draft/room';
 import { syncLanes } from './services/lanes';
 import { announceDue } from './services/publishing';
 import type { Env } from './env';
@@ -36,6 +38,7 @@ app.route('/api/inquiries', inquiryRoutes);
 app.route('/api/home', homeRoutes);
 app.route('/api', applicationRoutes);
 app.route('/api/dev', devRoutes);
+app.route('/api/draft', draftRoutes);
 app.route('/api/admin', adminRoutes);
 
 app.notFound((c) => c.json({ error: 'not_found' }, 404));

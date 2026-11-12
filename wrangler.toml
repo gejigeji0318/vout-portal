@@ -18,6 +18,15 @@ database_name = "portal-db"
 database_id = "REPLACE_WITH_D1_DATABASE_ID"
 migrations_dir = "migrations"
 
+# ドラフトのリアルタイム同期（大会ごとに 1 つ）
+[[durable_objects.bindings]]
+name = "DRAFT"
+class_name = "DraftRoom"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["DraftRoom"]
+
 [[r2_buckets]]
 binding = "IMAGES"
 bucket_name = "portal-images"

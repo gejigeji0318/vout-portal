@@ -31,6 +31,15 @@ describe('開発用の立場の切り替え', () => {
     expect((await req('POST', '/api/dev/login-as', { auth: sub, body: { persona: 'super' }, env: test })).status).toBe(422);
   });
 
+  it('ドラフト用の見本データも、本番では存在しない扱い。開発では各ロール 2 人ずつ作られ、そのままドラフトを始められる', async () => {
+    expect((await req('POST', '/api/dev/seed-draft', { env: { ENVIRONMENT: 'production' } })).status).toBe(404);
+    await makeTournament(2);
+    const r = await json(await req('POST', '/api/dev/seed-draft', { env: dev }));
+    expect(r).toMatchObject({ teams: 2, players: 10 });
+    const admin = await loginAs(await makeUser({ adminLevel: 'sub' }));
+    expect((await req('POST', '/api/admin/draft/open-lobby', { auth: admin })).status).toBe(200);
+  });
+
   it('開発の PC では、選んだ立場のテスト用アカウントでログインでき、名前に（テスト）が付く', async () => {
     const t = await makeTournament(2);
     const res = await req('POST', '/api/dev/login-as', { body: { persona: 'coach-a' }, env: dev });

@@ -27,6 +27,11 @@ export default defineConfig(async () => {
       }),
     ],
     // テストのファイルは 1 つずつ順に実行する（同じテスト用 DB を使うため、並行すると「開催中の大会」が入れ替わってしまう）
-    test: { setupFiles: ['./test/setup.ts'], fileParallelism: false },
+    test: {
+      setupFiles: ['./test/setup.ts'],
+      fileParallelism: false,
+      // サーバー側のテストだけ（e2e/ は画面の通しテスト。Playwright で動かす）
+      include: ['test/**/*.test.ts'],
+    },
   };
 });

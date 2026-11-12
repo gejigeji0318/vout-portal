@@ -4,6 +4,8 @@ import type { AppEnv } from '../env';
 /** セキュリティヘッダー（S-4-1〜S-4-3） */
 export const securityHeaders: MiddlewareHandler<AppEnv> = async (c, next) => {
   await next();
+  // WebSocket の接続（101）の応答は変更できないので、そのまま通す（ページの中身は含まれない）
+  if (c.res.status === 101) return;
   const h = c.res.headers;
   h.set('X-Content-Type-Options', 'nosniff');
   h.set('X-Frame-Options', 'DENY');
