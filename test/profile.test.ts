@@ -39,6 +39,13 @@ describe('マイページ：その他の項目', () => {
     expect((await json(await req('GET', '/api/me', { auth: a }))).user.streamUrls).toEqual([]);
   });
 
+  it('配信 URL が正しくないときは、何番目の欄が悪いのかをエラーに入れる', async () => {
+    const a = await loginAs(await makeUser());
+    const res = await req('PATCH', '/api/me', { auth: a, body: { streamUrls: ['https://www.twitch.tv/ok', 'daed'] } });
+    expect(res.status).toBe(422);
+    expect((await json(res)).message).toContain('配信 URL（2 つ目）');
+  });
+
   it('よく使う時間は users の 1 列（JSON）に保存される', async () => {
     const id = await makeUser();
     const a = await loginAs(id);

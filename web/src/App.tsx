@@ -16,6 +16,7 @@ import { RulesPage } from './pages/RulesPage';
 import { NewsDetailPage, NewsListPage } from './pages/NewsPages';
 import { PrivacyPage } from './pages/PrivacyPage';
 import { InquiryPage } from './pages/InquiryPage';
+import { EntryPage } from './pages/EntryPage';
 
 function NotFound() {
   return (<><Title order={1} mb="sm">ページが見つかりません</Title><Text>URL を確認するか、メニューから移動してください。</Text></>);
@@ -36,6 +37,7 @@ export function App() {
           <Route path="news/:id" element={<NewsDetailPage />} />
           <Route path="privacy" element={<PrivacyPage />} />
           <Route path="inquiries" element={<InquiryPage />} />
+          <Route path="entry" element={<EntryPage />} />
           <Route path="*" element={<NotFound />} />
         </Route>
         <Route path="admin" element={<AdminLayout />}>

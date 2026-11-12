@@ -2,6 +2,7 @@ import { Anchor, Box, Burger, Button, Container, Drawer, Group, Stack, Text } fr
 import { useDisclosure } from '@mantine/hooks';
 import { Link, NavLink, Outlet } from 'react-router';
 import { ImportantBanner } from './ImportantBanner';
+import { DevSwitcher } from './DevSwitcher';
 import { api } from '../api';
 import { useSession } from '../session';
 
@@ -60,6 +61,7 @@ export function UserLayout() {
       <Box component="footer" py="lg" style={{ borderTop: '1px solid var(--line)' }}>
         <Container size="lg"><Anchor component={Link} to="/privacy" size="sm" c="var(--muted)">プライバシーポリシー</Anchor></Container>
       </Box>
+      <DevSwitcher />
     </Box>
   );
 }

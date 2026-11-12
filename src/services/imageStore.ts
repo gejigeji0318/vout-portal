@@ -55,3 +55,12 @@ export async function verifyImageSignature(env: Env, id: string, exp: string | u
   if (Number(exp) < Math.floor(now().getTime() / 1000)) return false;
   return safeEqual(await sign(env, id, Number(exp)), sig);
 }
+
+/** 物理削除（R2 の画像と images の行をすぐに消す）。不採用・取り下げのときに使う */
+export async function hardDeleteImage(env: Env, id: string | null | undefined): Promise<void> {
+  if (!id) return;
+  const row = await env.DB.prepare('SELECT r2_key FROM images WHERE id = ?').bind(id).first<{ r2_key: string }>();
+  if (!row) return;
+  await env.IMAGES.delete(row.r2_key);
+  await env.DB.prepare('DELETE FROM images WHERE id = ?').bind(id).run();
+}

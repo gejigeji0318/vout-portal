@@ -53,6 +53,9 @@ const matrix: Array<{ name: string; method: string; path: string; expected: Reco
   { name: '問い合わせ対応', method: 'GET', path: '/api/admin/inquiries', expected: ADMIN_ONLY },
   { name: '適性レーンの状態', method: 'GET', path: '/api/admin/lanes/status', expected: ADMIN_ONLY },
   { name: 'TOP', method: 'GET', path: '/api/home', expected: EVERYONE },
+  { name: '応募一覧（審査）', method: 'GET', path: '/api/admin/applications', expected: ADMIN_ONLY },
+  { name: '仮決定表', method: 'GET', path: '/api/admin/provisional', expected: ADMIN_ONLY },
+  { name: '募集要項', method: 'GET', path: '/api/recruitment', expected: EVERYONE },
   { name: 'Discord のチャンネル一覧', method: 'GET', path: '/api/admin/discord/channels', expected: SUPER_ONLY },
 ];
 

@@ -8,6 +8,7 @@ import { systemAdmin } from './system';
 import { contentAdmin } from './content';
 import { inquiriesAdmin } from './inquiries';
 import { lanesAdmin } from './lanes';
+import { selectionAdmin } from './selection';
 
 /** 管理者 API。Cloudflare Access ＋ 管理者のセッションの二重で守る（S-1-3） */
 export const adminRoutes = new Hono<AppEnv>();
@@ -21,3 +22,4 @@ adminRoutes.route('/', systemAdmin);
 adminRoutes.route('/', contentAdmin);
 adminRoutes.route('/', inquiriesAdmin);
 adminRoutes.route('/', lanesAdmin);
+adminRoutes.route('/', selectionAdmin);

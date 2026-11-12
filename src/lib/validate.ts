@@ -59,7 +59,11 @@ export function validateHttpsUrl(raw: unknown, field: string, allowedHosts?: str
 export function validateStreamUrls(raw: unknown): string[] {
   if (raw === null || raw === undefined) return [];
   if (!Array.isArray(raw)) throw new HttpError(422, 'invalid_stream_urls');
-  const urls = raw.map((u) => validateHttpsUrl(u, 'stream_url', STREAM_HOSTS)).filter((u): u is string => Boolean(u));
+  const urls = raw.map((u, i) => {
+    try { return validateHttpsUrl(u, 'stream_url', STREAM_HOSTS); } catch (e) {
+      throw new HttpError(422, 'invalid_stream_url', `配信 URL（${i + 1} つ目）：${e instanceof HttpError && e.message !== 'invalid_stream_url' ? e.message : '形式が正しくありません'}`);
+    }
+  }).filter((u): u is string => Boolean(u));
   const unique = [...new Set(urls)];
   if (unique.length > 3) throw new HttpError(422, 'invalid_stream_urls', '配信 URL は 3 件までです');
   return unique;

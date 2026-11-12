@@ -12,6 +12,8 @@ import { announcementRoutes } from './routes/announcements';
 import { laneRoutes } from './routes/lanes';
 import { inquiryRoutes } from './routes/inquiries';
 import { homeRoutes } from './routes/home';
+import { applicationRoutes } from './routes/applications';
+import { devRoutes } from './routes/dev';
 import { syncLanes } from './services/lanes';
 import { announceDue } from './services/publishing';
 import type { Env } from './env';
@@ -32,6 +34,8 @@ app.route('/api/announcements', announcementRoutes);
 app.route('/api/lanes', laneRoutes);
 app.route('/api/inquiries', inquiryRoutes);
 app.route('/api/home', homeRoutes);
+app.route('/api', applicationRoutes);
+app.route('/api/dev', devRoutes);
 app.route('/api/admin', adminRoutes);
 
 app.notFound((c) => c.json({ error: 'not_found' }, 404));

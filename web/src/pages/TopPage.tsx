@@ -25,6 +25,7 @@ export function TopPage() {
       <Box style={{ background: '#1a1d23', color: '#fff', borderRadius: 16, padding: '36px 32px' }}>
         {h.tournament && <Badge color="gray" variant="light" mb="sm">{PHASE[h.tournament.phase]}</Badge>}
         <Title order={1} fz={34}>{name}</Title>
+        {h.tournament?.phase === 'recruiting' && !me.user?.isAdmin && <Button component={Link} to="/entry" mt="md" mr="sm">応募する・応募状況</Button>}
         {me.loggedIn
           ? <Text c="#d5d9e0" mt="xs">ようこそ、{me.user?.displayName} さん。</Text>
           : <Group mt="md" gap="sm"><Button component="a" href="/auth/login">Discord でログイン</Button><Button component={Link} to="/about" variant="white" color="dark">はじめに</Button></Group>}

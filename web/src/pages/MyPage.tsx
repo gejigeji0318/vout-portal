@@ -6,6 +6,7 @@ import { Navigate } from 'react-router';
 import { api, ApiError, apiUpload } from '../api';
 import { ImageCropper } from '../components/ImageCropper';
 import { ACCEPT_IMAGES, loadBitmap, MAX_SOURCE_BYTES } from '../imageTools';
+import { streamUrlError, xAccountError } from '../validators';
 import { MEMBER_TYPE } from '../labels';
 import { useSession } from '../session';
 
@@ -97,13 +98,13 @@ function ProfileCard({ canWriteBio, onSaved }: { canWriteBio: boolean; onSaved: 
         )}
         <TextInput label="表示名" value={displayName} onChange={(e) => setDisplayName(e.currentTarget.value)} placeholder={u.discordName}
           description={`空にすると Discord の名前（${u.discordName}）を表示します。他の人と同じ名前や、運営と紛らわしい名前は使えません`} maxLength={20} />
-        <TextInput label="X アカウント" value={xAccount} onChange={(e) => setXAccount(e.currentTarget.value)} placeholder="@" maxLength={16} />
+        <TextInput label="X アカウント" value={xAccount} onChange={(e) => setXAccount(e.currentTarget.value)} placeholder="@" maxLength={16} error={xAccountError(xAccount)} />
         <Stack gap={6}>
           <Text component="label" fw={500} size="sm">配信 URL</Text>
           <Text size="xs" c="dimmed" mt={-6}>Twitch・YouTube などの配信ページ（3 件まで）</Text>
           {streamUrls.map((url, i) => (
-            <Group key={i} gap="xs" wrap="nowrap">
-              <TextInput aria-label={`配信 URL ${i + 1}`} value={url} placeholder="https://" type="url" style={{ flex: 1 }}
+            <Group key={i} gap="xs" wrap="nowrap" align="flex-start">
+              <TextInput aria-label={`配信 URL ${i + 1}`} value={url} placeholder="https://" type="url" style={{ flex: 1 }} error={streamUrlError(url)}
                 onChange={(e) => { const v = e.currentTarget.value; setStreamUrls((l) => l.map((x, j) => (j === i ? v : x))); }} />
               {streamUrls.length > 1 && (
                 <ActionIcon variant="subtle" color="red" size="lg" aria-label={`配信 URL ${i + 1} を削除`} onClick={() => setStreamUrls((l) => l.filter((_, j) => j !== i))}>×</ActionIcon>
@@ -117,7 +118,7 @@ function ProfileCard({ canWriteBio, onSaved }: { canWriteBio: boolean; onSaved: 
         {canWriteBio && (
           <Textarea label="紹介文" description="「はじめに」の運営メンバー紹介に表示されます" value={bio} onChange={(e) => setBio(e.currentTarget.value)} maxLength={300} autosize minRows={3} />
         )}
-        <Button onClick={save} loading={saving} w="fit-content">保存する</Button>
+        <Button onClick={save} loading={saving} w="fit-content" disabled={Boolean(xAccountError(xAccount) || streamUrls.some((u) => streamUrlError(u)))}>保存する</Button>
       </Stack>
     </Card>
   );

@@ -26,6 +26,7 @@ export default defineConfig(async () => {
         },
       }),
     ],
-    test: { setupFiles: ['./test/setup.ts'] },
+    // テストのファイルは 1 つずつ順に実行する（同じテスト用 DB を使うため、並行すると「開催中の大会」が入れ替わってしまう）
+    test: { setupFiles: ['./test/setup.ts'], fileParallelism: false },
   };
 });

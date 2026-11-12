@@ -11,11 +11,14 @@ interface Props {
   onDone: (blob: Blob) => void;
   /** 丸く表示する画像（アイコン）なら true。枠の形の目安を出す */
   round?: boolean;
+  /** 保存する画像の一辺（px） */
+  outputSize?: number;
 }
 
 /** 切り抜く範囲をドラッグ（位置）とスライダー（拡大）で決める */
-export function ImageCropper({ bitmap, onCancel, onDone, round = true }: Props) {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+export function ImageCropper({ bitmap, onCancel, onDone, round = true, outputSize = 512 }: Props) {
+  // 画面が開ききる前は描く先がまだ無いので、用意できた時点を状態として受け取り、そのときに必ず描く
+  const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null);
   const [zoom, setZoom] = useState(1);
   const [pos, setPos] = useState({ x: 0, y: 0 }); // 枠に対する画像の左上の位置
   const drag = useRef<{ px: number; py: number; x: number; y: number } | null>(null);
@@ -39,7 +42,7 @@ export function ImageCropper({ bitmap, onCancel, onDone, round = true }: Props) 
   }, [bitmap]);
 
   useEffect(() => {
-    const cv = canvasRef.current;
+    const cv = canvas;
     if (!cv || !bitmap) return;
     const dpr = window.devicePixelRatio || 1;
     cv.width = VIEW * dpr;
@@ -56,7 +59,7 @@ export function ImageCropper({ bitmap, onCancel, onDone, round = true }: Props) 
       ctx.arc(VIEW / 2, VIEW / 2, VIEW / 2, 0, Math.PI * 2, true);
       ctx.fill('evenodd');
     }
-  }, [bitmap, pos, w, h, round]);
+  }, [canvas, bitmap, pos, w, h, round]);
 
   // 拡大するときは、枠の中心にある場所を中心に保つ
   const changeZoom = (z: number) => {
@@ -90,7 +93,7 @@ export function ImageCropper({ bitmap, onCancel, onDone, round = true }: Props) 
     if (!bitmap) return;
     setBusy(true);
     try {
-      onDone(await cropToSquare(bitmap, -pos.x / scale, -pos.y / scale, VIEW / scale));
+      onDone(await cropToSquare(bitmap, -pos.x / scale, -pos.y / scale, VIEW / scale, outputSize));
     } finally { setBusy(false); }
   };
 
@@ -99,7 +102,7 @@ export function ImageCropper({ bitmap, onCancel, onDone, round = true }: Props) 
       <Stack align="center" gap="md">
         <Text size="sm" c="var(--muted)">画像をドラッグして位置を、スライダーで大きさを調整してください。矢印キーでも動かせます。</Text>
         <Box style={{ width: VIEW, height: VIEW, borderRadius: 8, overflow: 'hidden', background: '#e3e6eb', touchAction: 'none' }}>
-          <canvas ref={canvasRef} style={{ width: VIEW, height: VIEW, cursor: 'grab', display: 'block' }} tabIndex={0}
+          <canvas ref={setCanvas} style={{ width: VIEW, height: VIEW, cursor: 'grab', display: 'block' }} tabIndex={0}
             role="img" aria-label="切り抜く範囲のプレビュー（ドラッグまたは矢印キーで移動）"
             onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={onUp} onKeyDown={onKey} />
         </Box>
