@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>チャンピオン メインレーン一覧</title>
+<style>
+:root{
+  --bg:#EDF0EA; --surface:#F8F9F5; --ink:#1D2B28; --muted:#5E6E69; --line:#CDD5CE;
+  --rift:#2F5D50; --gold:#A8842F;
+  --top:#B5523B; --jungle:#4C7A3A; --mid:#3E62A8; --adc:#A8842F; --support:#7A5A9E;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#16211F; --surface:#1D2A27; --ink:#E6ECE7; --muted:#9AAAA4; --line:#33443F;
+    --rift:#7FB8A5; --gold:#D6B25E;
+    --top:#E08A72; --jungle:#8DBE72; --mid:#86A7E6; --adc:#D6B25E; --support:#B79AD8;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#16211F; --surface:#1D2A27; --ink:#E6ECE7; --muted:#9AAAA4; --line:#33443F;
+  --rift:#7FB8A5; --gold:#D6B25E;
+  --top:#E08A72; --jungle:#8DBE72; --mid:#86A7E6; --adc:#D6B25E; --support:#B79AD8;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",system-ui,sans-serif;line-height:1.6}
+.wrap{max-width:960px;margin:0 auto;padding:28px 20px 60px}
+h1{font-size:clamp(1.6rem,4vw,2.3rem);font-weight:900;letter-spacing:.02em;margin:0 0 4px}
+.sub{color:var(--muted);margin:0 0 24px;font-size:.92rem}
+.lanes{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:18px}
+.lane{border:2px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;
+  padding:10px 8px;text-align:left;cursor:pointer;font:inherit}
+.lane .n{display:block;font-size:1.7rem;font-weight:900;line-height:1.1;color:var(--c)}
+.lane .l{font-size:.85rem;color:var(--muted)}
+.lane[aria-pressed="true"]{border-color:var(--c);box-shadow:inset 0 -4px 0 var(--c)}
+.lane:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.tools input[type=search],.tools select{font:inherit;padding:9px 12px;border:1px solid var(--line);
+  border-radius:8px;background:var(--surface);color:var(--ink)}
+.tools input[type=search]{flex:1;min-width:180px}
+.btn{font:inherit;padding:9px 14px;border-radius:8px;border:1px solid var(--rift);background:transparent;color:var(--rift);cursor:pointer}
+.btn.solid{background:var(--rift);color:var(--surface)}
+.list{border-top:1px solid var(--line)}
+.row{display:grid;grid-template-columns:minmax(120px,1.2fr) 110px 1.6fr;gap:14px;align-items:center;
+  padding:10px 4px;border-bottom:1px solid var(--line)}
+.name{font-weight:700;overflow-wrap:anywhere}
+.name small{display:block;font-weight:400;font-size:.75rem;color:var(--muted);text-transform:capitalize;line-height:1.2}
+.badge{display:inline-flex;align-items:baseline;gap:6px;font-weight:700;color:var(--c)}
+.badge small{color:var(--muted);font-weight:400}
+.badge.none{color:var(--muted);font-weight:500}
+.note{font-size:.8rem;color:var(--muted)}
+.bar{display:flex;height:12px;border-radius:6px;overflow:hidden;background:var(--line)}
+.bar span{background:var(--c);height:100%}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.8rem;color:var(--muted);margin:0 0 10px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--c);margin-right:5px}
+.drop{border:2px dashed var(--line);border-radius:14px;padding:48px 20px;text-align:center;background:var(--surface)}
+.drop p{margin:0 0 14px}
+.foot{margin-top:28px;font-size:.8rem;color:var(--muted)}
+.err{color:var(--top);margin-top:10px}
+@media (max-width:640px){
+  .lanes{grid-template-columns:repeat(3,1fr)}
+  .row{grid-template-columns:1fr auto;}
+  .row .bar,.row .note{grid-column:1/-1}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>メインレーン一覧</h1>
+  <p class="sub" id="meta">チャンピオンごとに、OP.GGでピック率が一番高いレーン</p>
+
+  <div id="empty" class="drop">
+    <p id="status">データを読み込んでいます…</p>
+  </div>
+
+  <div id="main" hidden>
+    <div class="lanes" id="lanes"></div>
+    <div class="tools">
+      <input type="search" id="q" placeholder="チャンピオン名で絞り込み（日本語・英語）" aria-label="チャンピオン名で絞り込み">
+      <select id="sort" aria-label="並び順">
+        <option value="name">名前順</option>
+        <option value="rate">ピック率が高い順</option>
+        <option value="flex">複数レーンで使われる順</option>
+      </select>
+    </div>
+    <div class="legend" id="legend"></div>
+    <div class="list" id="list"></div>
+    <p class="foot">データ出典: OP.GG（https://op.gg）、チャンピオン名: Riot Games。バーは各レーンのピック率の比率です。毎日6:00(JST)ごろ自動更新。</p>
+  </div>
+</div>
+
+<script type="module" src="./main.ts"></script>
+</body>
+</html>

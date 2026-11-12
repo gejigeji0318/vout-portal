@@ -1,0 +1,6 @@
+:root { --page-bg: #f5f6f8; --ink: #1a1d23; --muted: #4a5160; --line: #dde1e7; --admin-bar: #1a1d23; --admin-mark: #c99a2e; }
+body { background: var(--page-bg); color: var(--ink); }
+.admin-only { border: 1px dashed var(--admin-mark); background: #fff8e6; border-radius: 8px; padding: 12px 16px; }
+.admin-only__label { color: #6b4e00; font-weight: 700; font-size: 13px; }
+:focus-visible { outline: 3px solid #5b80dd; outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }

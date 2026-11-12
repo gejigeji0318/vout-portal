@@ -1,0 +1,9 @@
+# ローカル開発用の秘密情報。このファイルを .dev.vars にコピーして値を入れる（.dev.vars は Git に入れない）
+DISCORD_CLIENT_ID=ここに開発用 Discord アプリの Client ID
+DISCORD_CLIENT_SECRET=ここに開発用 Discord アプリのシークレット
+DISCORD_BOT_TOKEN=ここに開発用 Bot のトークン
+DISCORD_GUILD_ID=ここに通知を送るサーバーの ID
+# 32 バイトの鍵：  node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+ENCRYPTION_KEY=
+# ランダムな長い文字列： node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"
+SIGNING_KEY=

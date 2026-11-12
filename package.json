@@ -1,0 +1,36 @@
+{
+  "name": "tournament-portal",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "npm run build && npm run db:migrate:local && wrangler dev",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit -p . && tsc --noEmit -p web",
+    "db:migrate:local": "wrangler d1 migrations apply portal-db --local",
+    "db:migrate:remote": "wrangler d1 migrations apply portal-db --remote",
+    "build": "vite build --config web/vite.config.ts"
+  },
+  "dependencies": {
+    "@fontsource-variable/noto-sans-jp": "5.3.1",
+    "@fontsource/zen-kaku-gothic-new": "5.3.1",
+    "@mantine/core": "9.7.3",
+    "@mantine/hooks": "9.7.3",
+    "@mantine/notifications": "9.7.3",
+    "hono": "4.13.13",
+    "react": "19.2.9",
+    "react-dom": "19.2.9",
+    "react-router": "8.5.0"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-plugin": "1.4.7",
+    "@cloudflare/workers-types": "5.20261022.1",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.1.2",
+    "typescript": "5.9.3",
+    "vite": "8.3.5",
+    "vitest": "4.1.12",
+    "wrangler": "4.152.0"
+  }
+}

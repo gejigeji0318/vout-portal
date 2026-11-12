@@ -1,0 +1,42 @@
+name = "tournament-portal"
+main = "src/index.ts"
+compatibility_date = "2026-10-01"
+
+# 画面（web/ をビルドしたもの）。/api と /auth は先に Worker が受け取る
+[assets]
+directory = "./dist/client"
+not_found_handling = "single-page-application"
+run_worker_first = ["/api/*", "/auth/*", "/img/*"]
+
+# 定期処理
+[triggers]
+crons = ["*/5 * * * *", "0 22 * * *"]  # 5 分ごと（予約公開）、毎日 7:00 JST（適性レーンの取り込み）
+
+[[d1_databases]]
+binding = "DB"
+database_name = "portal-db"
+database_id = "REPLACE_WITH_D1_DATABASE_ID"
+migrations_dir = "migrations"
+
+[[r2_buckets]]
+binding = "IMAGES"
+bucket_name = "portal-images"
+
+[vars]
+# development / test / production
+ENVIRONMENT = "development"
+APP_ORIGIN = "http://localhost:8787"
+DISCORD_CLIENT_ID = ""
+# 通知を送る Discord サーバーの ID（サーバー名を右クリック →「サーバー ID をコピー」）
+DISCORD_GUILD_ID = ""
+# 適性レーンのデータ（既存の championLane の data.json）
+LANES_DATA_URL = "https://gejigeji0318.github.io/championLane/data.json"
+# Cloudflare Access（管理者画面の二重保護）。本番では必ず設定する
+ACCESS_TEAM_DOMAIN = ""
+ACCESS_AUD = ""
+
+# 秘密情報は wrangler secret put で登録する（リポジトリに書かない）
+#   DISCORD_CLIENT_SECRET : Discord アプリのシークレット
+#   DISCORD_BOT_TOKEN     : 通知用 Bot のトークン
+#   ENCRYPTION_KEY        : 32 バイトの鍵を base64 にしたもの（Webhook URL などの暗号化）
+#   SIGNING_KEY           : CSRF トークンの署名用の鍵（ランダムな長い文字列）
