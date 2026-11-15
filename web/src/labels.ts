@@ -17,7 +17,9 @@ export const AUDIT_ACTION: Record<string, string> = {
   announcement_delete: 'お知らせの削除', announcement_publish: 'お知らせの公開', announcement_remind: '重要なお知らせの再通知', lanes_sync: '適性レーンの取り込み', lanes_visibility_update: '適性レーンの公開範囲の変更',
   inquiry_reply: '問い合わせへの返信', inquiry_update: '問い合わせの状態の変更',
   recruitment_update: '募集の設定', review_assign: '審査担当の割り当て', review_auto_assign: '審査担当の自動割り当て', review_submit: '審査の送信',
-  provisional_set: '仮決定表に入れる', provisional_remove: '仮決定表から外す', announce_selection: '選考結果の発表', cancel_acceptance: '採用の取り消し', application_staff_edit: '応募内容の修正（運営）', dev_login_as: '開発用の立場の切り替え',
+  provisional_set: '仮決定表に入れる', provisional_remove: '仮決定表から外す', announce_selection: '選考結果の発表', cancel_acceptance: '採用の取り消し', application_staff_edit: '応募内容の修正（運営）', schedule_slots_set: '予定表の日程の登録', fill_approve: '人員補充の決定', team_name_set: 'チーム名の決定（コーチ）', team_intro_publish: 'チーム紹介の公開', team_intro_unpublish: 'チーム紹介の非公開', daily_cleanup: '期限を過ぎたデータの削除', approval_request: '二人承認の申請', approval_approve: '二人承認の承認', approval_reject: '二人承認の却下', approval_cancel: '二人承認の取り消し',
+  tournament_end: '大会終了', tournament_restore: '大会の復元', tournament_purge: '終了した大会の削除', inactive_users_purge: '2 年ログインなしの削除', preview_start: 'プレビューの開始', team_page_delete: 'チームページの削除', fill_ob_now: 'OB への補充募集（手動）', fill_settings_update: '人員補充の設定の変更', ob_verified: 'OB の確認', schedule_slot_delete: '予定表の日程の削除', scrim_cancel: 'スクリムの中止',
+  draft_open_lobby: 'ドラフトの参加受付', draft_start: 'ドラフトの開始', draft_reset: 'ドラフトの初期化', draft_stream_key: '配信用 URL の発行', draft_confirm_result: 'ドラフト結果の確定', dev_seed_draft: '見本データの作成（開発）', dev_login_as: '開発用の立場の切り替え',
 };
 export const LANES = ['TOP', 'JG', 'MID', 'BOT', 'SUP'];
 

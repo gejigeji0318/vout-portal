@@ -83,6 +83,7 @@ describe('ユーザー管理', () => {
     expect((await json(blocked)).error).toBe('same_lane_exists');
     const ok = await req('POST', `/api/admin/users/${p1}/transfer`, { auth: sub, body: { teamId: t.teams[1], confirm: true } });
     expect(ok.status).toBe(200);
+    expect((await json(ok)).affectedScrims).toEqual([]);
     const m = await env.DB.prepare('SELECT team_id FROM tournament_members WHERE user_id = ?').bind(p1).first<{ team_id: string }>();
     expect(m!.team_id).toBe(t.teams[1]);
   });

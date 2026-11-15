@@ -9,13 +9,16 @@ import type { AdminLevel, Env, MemberType } from '../src/env';
 export const ORIGIN = 'http://localhost:8787';
 let seq = 0;
 
+/** 本物の Discord ID と同じ 18 桁の数字（テストファイルをまたいでも重ならないように、十分に長い乱数にする） */
+const fakeDiscordId = () => '1' + Array.from(crypto.getRandomValues(new Uint8Array(17)), (b) => String(b % 10)).join('');
+
 export async function makeUser(opts: { adminLevel?: AdminLevel; name?: string; suspended?: boolean } = {}): Promise<string> {
   const id = ulid();
   const t = nowIso();
   seq += 1;
   await env.DB.prepare(
     'INSERT INTO users (id, discord_user_id, discord_name, admin_level, last_login_at, suspended_at, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?)',
-  ).bind(id, String(100000000 + seq + Math.floor(Math.random() * 1e6)), opts.name ?? `user${seq}`, opts.adminLevel ?? 'none', t, opts.suspended ? t : null, t, t).run();
+  ).bind(id, fakeDiscordId(), opts.name ?? `user${seq}`, opts.adminLevel ?? 'none', t, opts.suspended ? t : null, t, t).run();
   return id;
 }
 

@@ -99,8 +99,11 @@ usersAdmin.post('/users/:id/transfer', async (c) => {
   await revokeAllSessions(c.env.DB, userId); // 見られるチームページが変わるため
   await writeAudit(c.env.DB, actor.id, 'transfer', { type: 'user', id: userId }, { fromTeamId: m.team_id, toTeamId: teamId, lane });
   await notify(c.env, 'transfer', 'チーム移動（移籍）がありました。詳しくはポータルで確認してください。').catch(() => false);
-  // 確定済みスクリムの一覧（自動では外さない）は段階 5 で追加する
-  return c.json({ ok: true });
+  // その選手が入っている、これからの確定済みスクリム（自動では外さない。コーチが参加メンバーを見直す）
+  const { results: scrims } = await c.env.DB.prepare(
+    "SELECT s.id, s.starts_at FROM scrim_participants p JOIN scrims s ON s.id = p.scrim_id WHERE p.user_id = ? AND s.status = 'confirmed' AND s.starts_at > ? ORDER BY s.starts_at",
+  ).bind(userId, nowIso()).all<{ id: string; starts_at: string }>();
+  return c.json({ ok: true, affectedScrims: scrims.map((x) => ({ id: x.id, startsAt: x.starts_at })) });
 });
 
 /** 利用停止（全体管理者のみ）。すぐにすべてのセッションを無効にする */

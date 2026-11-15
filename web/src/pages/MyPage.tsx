@@ -1,4 +1,4 @@
-import { ActionIcon, Avatar, Button, Card, FileButton, Group, Modal, Select, Stack, Text, Textarea, TextInput, Title } from '@mantine/core';
+import { ActionIcon, Avatar, Button, Card, FileButton, Group, Modal, Select, Stack, Switch, Text, Textarea, TextInput, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { useEffect, useState } from 'react';
@@ -24,6 +24,7 @@ export function MyPage() {
       <Title order={1}>マイページ</Title>
       <ProfileCard key={`${u.displayName}${u.xAccount}${u.streamUrls.join()}${u.bio}`} canWriteBio={canWriteBio} onSaved={reload} />
       <TimePresetsCard initial={u.timePresets} onSaved={reload} />
+      {(u.membership?.memberType === 'player' || u.membership?.memberType === 'coach') && <PublishCard />}
       <Card withBorder padding="lg">
         <Title order={2} size="h4" mb="xs">大会での立場</Title>
         <Text>
@@ -157,6 +158,29 @@ function TimePresetsCard({ initial, onSaved }: { initial: Preset[]; onSaved: () 
           <Button variant="default" disabled={rows.length >= 5} onClick={() => setRows((r) => [...r, { label: '', start: '20:00', end: '24:00' }])}>時間を追加</Button>
           <Button onClick={save} loading={saving}>保存する</Button>
         </Group>
+      </Stack>
+    </Card>
+  );
+}
+
+/** 参加者一覧・チーム紹介に、宣材写真・X・配信を出すか（本人が選ぶ） */
+function PublishCard() {
+  const [v, setV] = useState<{ photo: boolean; x: boolean; stream: boolean } | null>(null);
+  useEffect(() => { api<{ available: boolean; photo: boolean; x: boolean; stream: boolean }>('GET', '/api/roster/my-publish').then((r) => r.available && setV(r)).catch(() => {}); }, []);
+  if (!v) return null;
+  const set = async (patch: Partial<typeof v>) => {
+    const next = { ...v, ...patch };
+    setV(next);
+    try { await api('PUT', '/api/roster/my-publish', next); notifications.show({ color: 'green', message: '公開設定を保存しました' }); } catch (e) { fail(e); setV(v); }
+  };
+  return (
+    <Card withBorder padding="lg">
+      <Title order={2} size="h4" mb={4}>参加者一覧・チーム紹介での公開</Title>
+      <Text size="sm" c="var(--muted)" mb="md">表示名・レーン・チームは必ず表示されます。それ以外は、公開を選んだものだけ表示します。</Text>
+      <Stack gap="xs">
+        <Switch label="宣材写真を公開する" checked={v.photo} onChange={(e) => set({ photo: e.currentTarget.checked })} />
+        <Switch label="X アカウントを公開する" checked={v.x} onChange={(e) => set({ x: e.currentTarget.checked })} />
+        <Switch label="配信 URL を公開する" checked={v.stream} onChange={(e) => set({ stream: e.currentTarget.checked })} />
       </Stack>
     </Card>
   );

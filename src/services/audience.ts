@@ -13,6 +13,8 @@ export interface Viewer {
 
 export async function getViewer(db: D1Database, user: CurrentUser | null): Promise<Viewer> {
   const tournament = await getCurrentTournament(db);
+  // プレビュー中は、選んだ立場として見せる
+  if (user?.preview) return { user, isAdmin: false, tournament, memberType: user.preview.memberType, teamId: user.preview.teamId };
   const m = user && tournament ? await getMembership(db, tournament.id, user.id) : null;
   return { user, isAdmin: Boolean(user && user.adminLevel !== 'none'), tournament, memberType: m?.member_type ?? null, teamId: m?.team_id ?? null };
 }

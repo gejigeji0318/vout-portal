@@ -55,11 +55,12 @@ export function TopPage() {
               <Stack gap="xs">{h.events.map((e) => (
                 <Group key={e.title + e.starts_at} justify="space-between" p="sm" style={{ border: '1px solid #ebedf1', borderRadius: 10 }}>
                   <Text size="sm"><Text span fw={700}>{showDateTime(e.starts_at)}</Text>　{e.title}</Text>
-                  <Badge variant="light" color={e.kind === 'main' ? 'gray' : 'blue'}>{e.kind === 'main' ? '本番' : '配信'}</Badge>
+                  <Badge variant="light" color={e.kind === 'main' ? 'gray' : e.kind === 'scrim' ? 'green' : 'blue'}>{e.kind === 'main' ? '本番' : e.kind === 'scrim' ? 'スクリム' : '配信'}</Badge>
                 </Group>))}</Stack>
             )}
           </Card>
         </Stack>
+        <Stack gap="xl">
         <Card withBorder padding="lg">
           <Group justify="space-between" mb="sm"><Title order={2} size="h4">お知らせ</Title><Anchor component={Link} to="/news" size="sm">すべて見る</Anchor></Group>
           {h.news.length === 0 ? <Text c="var(--muted)">お知らせはまだありません。</Text> : (
@@ -71,6 +72,14 @@ export function TopPage() {
               </Anchor>))}</Stack>
           )}
         </Card>
+        <Card withBorder padding="lg">
+          <Title order={2} size="h4" mb="sm">ツール</Title>
+          <Group gap="sm" align="center">
+            <Button component="a" href="/tools/lanes/" target="_blank" rel="noopener" variant="default" radius="xl">適性レーン ↗</Button>
+            <Text size="sm" c="var(--muted)">チャンピオンのメインレーン一覧（毎日更新）</Text>
+          </Group>
+        </Card>
+        </Stack>
       </SimpleGrid>
     </Stack>
   );

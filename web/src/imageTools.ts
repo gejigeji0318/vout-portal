@@ -21,3 +21,15 @@ export function cropToSquare(bitmap: ImageBitmap, sx: number, sy: number, side: 
 /** 元の画像として受け付ける種類と大きさ（描き直した後は数百 KB 程度になる） */
 export const ACCEPT_IMAGES = 'image/png,image/jpeg,image/webp';
 export const MAX_SOURCE_BYTES = 20 * 1024 * 1024;
+
+/** スクリーンショットなど：縦横比はそのまま、長い辺を max px までに縮めて WebP にする（撮影場所などの情報も消える） */
+export async function shrinkImage(file: File, max = 1600): Promise<Blob> {
+  const bitmap = await loadBitmap(file);
+  const scale = Math.min(1, max / Math.max(bitmap.width, bitmap.height));
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.round(bitmap.width * scale);
+  canvas.height = Math.round(bitmap.height * scale);
+  canvas.getContext('2d')!.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  bitmap.close();
+  return new Promise((resolve, reject) => canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('encode_failed'))), 'image/webp', 0.88));
+}

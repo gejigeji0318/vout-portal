@@ -162,6 +162,19 @@ describe('ドラフト：進行', () => {
   });
 });
 
+describe('ドラフトの期間の知らせ', () => {
+  it('参加受付から結果の確定までの間だけ、コーチに「ドラフトの期間」と伝える。選手には伝えない', async () => {
+    const w = await world();
+    const open = async (a: Auth) => (await json(await req('GET', '/api/me', { auth: a }))).draftOpen;
+    expect(await open(w.a1)).toBe(false);
+    await op(w.admin, '/api/admin/draft/open-lobby');
+    expect(await open(w.a1)).toBe(true);
+    expect(await open(w.player)).toBe(false);
+    await op(w.admin, '/api/admin/draft/reset');
+    expect(await open(w.a1)).toBe(false);
+  });
+});
+
 describe('ドラフト：配信用画面とリアルタイム接続', () => {
   it('配信用 URL は鍵が無い・違うと見られない。作り直すと前の鍵は使えない。初期化すると使えなくなる', async () => {
     const w = await world();

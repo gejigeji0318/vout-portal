@@ -57,6 +57,12 @@ const matrix: Array<{ name: string; method: string; path: string; expected: Reco
   { name: '仮決定表', method: 'GET', path: '/api/admin/provisional', expected: ADMIN_ONLY },
   { name: '募集要項', method: 'GET', path: '/api/recruitment', expected: EVERYONE },
   { name: 'ドラフトの進行（管理）', method: 'GET', path: '/api/admin/draft/state', expected: ADMIN_ONLY },
+  { name: '予定表', method: 'GET', path: '/api/schedule', expected: { anon: 401, viewer: 403, player: 200, coach: 200, staff: 200, sub: 200, super: 200 } },
+  { name: 'スクリム一覧', method: 'GET', path: '/api/scrims', expected: { anon: 401, viewer: 403, player: 200, coach: 200, staff: 200, sub: 200, super: 200 } },
+  { name: '人員補充', method: 'GET', path: '/api/fill', expected: { anon: 401, viewer: 403, player: 200, coach: 200, staff: 200, sub: 200, super: 200 } },
+  { name: 'チームページ', method: 'GET', path: '/api/team', expected: { anon: 401, viewer: 403, player: 200, coach: 200, staff: 403, sub: 403, super: 403 } },
+  { name: '大会参加者一覧', method: 'GET', path: '/api/roster/participants', expected: EVERYONE },
+  { name: 'チーム紹介', method: 'GET', path: '/api/roster/teams', expected: EVERYONE },
   { name: 'Discord のチャンネル一覧', method: 'GET', path: '/api/admin/discord/channels', expected: SUPER_ONLY },
 ];
 

@@ -27,6 +27,8 @@ export interface CurrentUser {
   displayName: string | null;
   adminLevel: AdminLevel;
   sessionId: string;
+  /** 管理者の「見るだけのプレビュー」中なら、その立場（この間は管理者として扱わず、書き込みもできない） */
+  preview?: { memberType: MemberType | null; teamId: string | null; realLevel: AdminLevel };
 }
 
 export type AppVars = { user: CurrentUser | null };

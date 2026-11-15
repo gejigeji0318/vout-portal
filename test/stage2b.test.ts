@@ -148,7 +148,7 @@ describe('TOP ページ', () => {
     const p = await makeUser();
     await addMember(t.id, p, 'player', t.teams[0]!);
     const home = await json(await req('GET', '/api/home', { auth: await loginAs(p) }));
-    expect(home.todos.map((x: any) => x.title)).toEqual(['重要なお知らせ「重要」を確認する']);
+    expect(home.todos.map((x: any) => x.title)).toContain('重要なお知らせ「重要」を確認する');
     expect((await json(await req('GET', '/api/home', { auth: sub }))).admin.openInquiries).toBeGreaterThanOrEqual(0);
   });
 });

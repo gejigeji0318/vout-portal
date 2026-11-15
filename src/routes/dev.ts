@@ -119,3 +119,57 @@ devRoutes.post('/seed-draft', async (c) => {
   await writeAudit(db, c.get('user')?.id ?? null, 'dev_seed_draft', { type: 'tournament', id: tour.id });
   return c.json({ ok: true, tournamentId: tour.id, teams: teams.length, players: n });
 });
+
+/**
+ * スクリムを試すための見本データ（開発・テスト環境だけ）：
+ * 今日からの 2 週間をスクリム期間にし、チーム 1・2 に選手 5 人ずつ（テスト用）を所属させ、
+ * 1 週間分の日程と、いろいろな ○△× の入力を用意する
+ */
+devRoutes.post('/seed-scrim', async (c) => {
+  assertAvailable(c);
+  const db = c.env.DB;
+  const t = nowIso();
+  let tour = await getCurrentTournament(db);
+  if (!tour) {
+    const id = ulid();
+    await db.prepare("INSERT INTO tournaments (id, name, phase, period_start, period_end, team_count, created_at, updated_at) VALUES (?,?,'scrim',?,?,2,?,?)")
+      .bind(id, 'テスト大会', t, new Date(Date.now() + 60 * 86400e3).toISOString(), t, t).run();
+    for (let i = 0; i < 2; i++) await db.prepare('INSERT INTO teams (id, tournament_id, created_at, updated_at) VALUES (?,?,?,?)').bind(ulid(), id, new Date(Date.now() + i).toISOString(), t).run();
+    tour = (await getCurrentTournament(db))!;
+  }
+  const today = new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10);
+  const day = (n: number) => new Date(new Date(`${today}T12:00:00+09:00`).getTime() + n * 86400e3 + 9 * 3600e3).toISOString().slice(0, 10);
+  await db.prepare("UPDATE tournaments SET phase = 'scrim', scrim_start = ?, scrim_end = ?, updated_at = ? WHERE id = ?")
+    .bind(new Date(`${today}T00:00:00+09:00`).toISOString(), new Date(`${day(13)}T00:00:00+09:00`).toISOString(), t, tour.id).run();
+  const { results: teams } = await db.prepare('SELECT id FROM teams WHERE tournament_id = ? AND deleted_at IS NULL ORDER BY created_at').bind(tour.id).all<{ id: string }>();
+  const ensure = async (key: string, name: string, type: 'player' | 'coach', teamId: string, lane: string | null) => {
+    let u = await db.prepare('SELECT id FROM users WHERE discord_user_id = ?').bind(`test-${key}`).first<{ id: string }>();
+    if (!u) { u = { id: ulid() }; await db.prepare('INSERT INTO users (id, discord_user_id, discord_name, last_login_at, created_at, updated_at) VALUES (?,?,?,?,?,?)').bind(u.id, `test-${key}`, `${name}（テスト）`, t, t, t).run(); }
+    await db.prepare('DELETE FROM tournament_members WHERE tournament_id = ? AND user_id = ?').bind(tour!.id, u.id).run();
+    await db.prepare('INSERT INTO tournament_members (id, tournament_id, user_id, member_type, team_id, lane, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?)').bind(ulid(), tour!.id, u.id, type, teamId, lane, t, t).run();
+    return u.id;
+  };
+  const lanes = ['TOP', 'JG', 'MID', 'BOT', 'SUP'];
+  const players: { id: string; team: number; i: number }[] = [];
+  for (const [ti, team] of teams.slice(0, 2).entries()) {
+    await ensure(['coach-a', 'coach-b'][ti]!, PERSONAS.find((p) => p.key === ['coach-a', 'coach-b'][ti])!.label, 'coach', team.id, null);
+    for (const [i, lane] of lanes.entries()) players.push({ id: await ensure(`scrim-${ti + 1}-${lane}`, `チーム${ti + 1}の${lane}`, 'player', team.id, lane), team: ti, i });
+  }
+  // 日程（今日から 7 日）と入力：日によって、そろう人数が変わるようにする
+  for (let n = 0; n < 7; n++) {
+    const date = day(n);
+    await db.prepare('INSERT INTO schedule_slots (id, tournament_id, date, std_start, std_end, created_at, updated_at) VALUES (?,?,?,?,?,?,?) ON CONFLICT(tournament_id, date) DO NOTHING')
+      .bind(ulid(), tour.id, date, '21:00', '24:00', t, t).run();
+    const slot = (await db.prepare('SELECT id FROM schedule_slots WHERE tournament_id = ? AND date = ?').bind(tour.id, date).first<{ id: string }>())!;
+    for (const p of players) {
+      const absent = (p.i + n + p.team) % 7 === 0 || (n === 2 && p.i < 2);
+      const status = absent ? 'x' : (p.i + n) % 5 === 0 ? 't' : 'o';
+      const start = status === 'x' ? null : status === 't' ? '22:00' : n % 2 ? '20:00' : '21:00';
+      const end = status === 'x' ? null : status === 't' ? '23:00' : '24:00';
+      await db.prepare('INSERT INTO availabilities (id, slot_id, user_id, status, start_time, end_time, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT(slot_id, user_id) DO UPDATE SET status = excluded.status, start_time = excluded.start_time, end_time = excluded.end_time')
+        .bind(ulid(), slot.id, p.id, status, start, end, t, t).run();
+    }
+  }
+  await writeAudit(db, c.get('user')?.id ?? null, 'dev_seed_scrim', { type: 'tournament', id: tour.id });
+  return c.json({ ok: true, players: players.length, days: 7 });
+});

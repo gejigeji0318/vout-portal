@@ -123,8 +123,8 @@ function TransferDialog({ user, teams, onClose, onDone }: { user: UserRow; teams
   const [warning, setWarning] = useState<string | null>(null);
   const submit = async (confirm: boolean) => {
     try {
-      await api('POST', `/api/admin/users/${user.id}/transfer`, { teamId, lane, confirm });
-      done('チームを移動しました');
+      const r = await api<{ affectedScrims: { startsAt: string }[] }>('POST', `/api/admin/users/${user.id}/transfer`, { teamId, lane, confirm });
+      done(r.affectedScrims.length ? `チームを移動しました。この選手は、これからの確定済みスクリム ${r.affectedScrims.length} 件（${r.affectedScrims.map((x) => showDateTime(x.startsAt)).join('、')}）の参加メンバーに入ったままです。各チームのコーチに見直しを依頼してください` : 'チームを移動しました');
       onDone();
     } catch (e) {
       if (e instanceof ApiError && e.code === 'same_lane_exists') setWarning(e.message); else fail(e);

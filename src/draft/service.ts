@@ -18,7 +18,7 @@ export async function draftActor(c: Context<AppEnv>): Promise<{ tournamentId: st
   const t = await getCurrentTournament(c.env.DB);
   if (!t) throw new HttpError(404, 'no_tournament', '開催中の大会がありません');
   if (user.adminLevel !== 'none') return { tournamentId: t.id, actor: { kind: 'admin', userId: user.id }, viewer: { kind: 'admin' } };
-  const m = await getMembership(c.env.DB, t.id, user.id);
+  const m = user.preview ? { member_type: user.preview.memberType, team_id: user.preview.teamId } : await getMembership(c.env.DB, t.id, user.id);
   if (m?.member_type === 'coach' && m.team_id) return { tournamentId: t.id, actor: { kind: 'coach', teamId: m.team_id, userId: user.id }, viewer: { kind: 'coach', teamId: m.team_id } };
   throw new HttpError(403, 'forbidden', 'ドラフトの画面は、コーチと運営だけが見られます');
 }

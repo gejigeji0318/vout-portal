@@ -1,4 +1,4 @@
-import { Button, Card, Group, Loader, SimpleGrid, Text, TextInput, Title } from '@mantine/core';
+import { Button, Card, Group, Loader, SimpleGrid, Switch, Text, TextInput, Title } from '@mantine/core';
 import { useCallback, useEffect, useState } from 'react';
 import { api } from '../../api';
 import { done, fail, type Team } from './shared';
@@ -33,6 +33,13 @@ function TeamCard({ team, index, onSaved }: { team: Team; index: number; onSaved
       <Group align="flex-end" gap="xs">
         <TextInput label="チーム名" value={name} onChange={(e) => setName(e.currentTarget.value)} maxLength={30} style={{ flex: 1 }} />
         <Button variant="default" onClick={save}>変更</Button>
+      </Group>
+      <Group justify="space-between" mt="sm">
+        <Switch label="チーム紹介を公開" checked={Boolean(team.intro_published_at)} onChange={async (e) => {
+          const published = e.currentTarget.checked;
+          try { await api('PUT', `/api/admin/teams/${team.id}/intro`, { published }); done(published ? 'チーム紹介を公開しました' : 'チーム紹介を非公開にしました'); onSaved(); } catch (err) { fail(err); }
+        }} />
+        <Button component="a" href={`/team?teamId=${team.id}`} variant="subtle" size="compact-sm">チームページを見る</Button>
       </Group>
     </Card>
   );

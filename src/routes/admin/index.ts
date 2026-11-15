@@ -10,6 +10,9 @@ import { inquiriesAdmin } from './inquiries';
 import { lanesAdmin } from './lanes';
 import { selectionAdmin } from './selection';
 import { draftAdmin } from './draft';
+import { scheduleAdmin } from './schedule';
+import { fillAdmin } from './fill';
+import { approvalsAdmin } from './approvals';
 
 /** 管理者 API。Cloudflare Access ＋ 管理者のセッションの二重で守る（S-1-3） */
 export const adminRoutes = new Hono<AppEnv>();
@@ -25,3 +28,6 @@ adminRoutes.route('/', inquiriesAdmin);
 adminRoutes.route('/', lanesAdmin);
 adminRoutes.route('/', selectionAdmin);
 adminRoutes.route('/', draftAdmin);
+adminRoutes.route('/', scheduleAdmin);
+adminRoutes.route('/', fillAdmin);
+adminRoutes.route('/', approvalsAdmin);

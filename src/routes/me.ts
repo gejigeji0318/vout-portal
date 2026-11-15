@@ -28,7 +28,8 @@ meRoutes.get('/', async (c) => {
     .first<UserRow>();
   if (!u) throw new HttpError(401, 'login_required');
   const tournament = await getCurrentTournament(c.env.DB);
-  const m = tournament ? await getMembership(c.env.DB, tournament.id, user.id) : null;
+  const real = tournament ? await getMembership(c.env.DB, tournament.id, user.id) : null;
+  const m = user.preview ? (user.preview.memberType ? { member_type: user.preview.memberType, team_id: user.preview.teamId, lane: null } : null) : real;
   return c.json({
     loggedIn: true,
     csrfToken: await csrfTokenFor(c.env, user.sessionId),
@@ -41,9 +42,13 @@ meRoutes.get('/', async (c) => {
       xAccount: u.x_account,
       iconUrl: await signedImageUrl(c.env, u.icon_image_id),
       timePresets: u.time_presets ? JSON.parse(u.time_presets) : [],
-      isAdmin: u.admin_level !== 'none',
+      isAdmin: !user.preview && u.admin_level !== 'none',
       membership: m ? { memberType: m.member_type, teamId: m.team_id, lane: m.lane } : null,
     },
+    preview: user.preview ? { memberType: user.preview.memberType, teamId: user.preview.teamId } : null,
+    tournamentActive: Boolean(tournament),
+    // ドラフトの期間（参加受付〜結果の確定）かどうか。コーチと運営にだけ伝える（ヘッダーのボタンと帯に使う）
+    draftOpen: (m?.member_type === 'coach' || (!user.preview && u.admin_level !== 'none')) && tournament ? await draftOpen(c.env.DB, tournament.id) : false,
   });
 });
 
@@ -110,6 +115,11 @@ meRoutes.delete('/icon', requireLogin, async (c) => {
   }
   return c.json({ ok: true });
 });
+
+async function draftOpen(db: D1Database, tournamentId: string): Promise<boolean> {
+  const s = await db.prepare('SELECT phase, confirmed_at FROM draft_sessions WHERE tournament_id = ? ORDER BY created_at DESC LIMIT 1').bind(tournamentId).first<{ phase: string; confirmed_at: string | null }>();
+  return Boolean(s && !s.confirmed_at && s.phase !== 'reset');
+}
 
 async function isStaffMember(db: D1Database, userId: string, adminLevel: string): Promise<boolean> {
   if (adminLevel !== 'none') return true;

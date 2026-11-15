@@ -2,11 +2,17 @@ import { getCookie } from 'hono/cookie';
 import type { MiddlewareHandler } from 'hono';
 import type { AdminLevel, AppEnv } from '../env';
 import { resolveSession, SESSION_COOKIE, verifyCsrf } from '../auth/session';
+import { PREVIEW_COOKIE, readPreview } from '../auth/preview';
 import { HttpError } from '../lib/errors';
 
 /** すべてのリクエストで、ログイン中の利用者を読み込む（いなければ null） */
 export const loadUser: MiddlewareHandler<AppEnv> = async (c, next) => {
-  c.set('user', await resolveSession(c.env.DB, getCookie(c, SESSION_COOKIE)));
+  let user = await resolveSession(c.env.DB, getCookie(c, SESSION_COOKIE));
+  if (user && user.adminLevel !== 'none') {
+    const preview = await readPreview(c.env, user.sessionId, getCookie(c, PREVIEW_COOKIE));
+    if (preview) user = { ...user, adminLevel: 'none', preview: { ...preview, realLevel: user.adminLevel } };
+  }
+  c.set('user', user);
   await next();
 };
 
@@ -39,6 +45,8 @@ export const csrfProtection: MiddlewareHandler<AppEnv> = async (c, next) => {
     if (user && !(await verifyCsrf(c.env, user.sessionId, c.req.header('X-CSRF-Token')))) {
       throw new HttpError(403, 'bad_csrf_token', '不正なリクエストです');
     }
+    // プレビュー中は見るだけ。終了以外の書き込みはすべて断る
+    if (user?.preview && c.req.path !== '/api/preview/stop') throw new HttpError(403, 'preview_readonly', 'プレビュー中は操作できません。プレビューを終了してください');
   }
   await next();
 };

@@ -40,6 +40,18 @@ describe('開発用の立場の切り替え', () => {
     expect((await req('POST', '/api/admin/draft/open-lobby', { auth: admin })).status).toBe(200);
   });
 
+  it('スクリム用の見本データも本番では存在しない扱い。開発では予定表に 2 チーム分の入力ができ、候補が提示される', async () => {
+    expect((await req('POST', '/api/dev/seed-scrim', { env: { ENVIRONMENT: 'production' } })).status).toBe(404);
+    const t = await makeTournament(2);
+    expect((await json(await req('POST', '/api/dev/seed-scrim', { env: dev }))).players).toBe(10);
+    const coach = await env.DB.prepare("SELECT u.id FROM users u WHERE u.discord_user_id = 'test-coach-a'").first<{ id: string }>();
+    const auth = await loginAs(coach!.id);
+    const sched = await json(await req('GET', '/api/schedule', { auth }));
+    expect(sched.slots).toHaveLength(7);
+    const { suggestions } = await json(await req('GET', `/api/scrims/suggest/${t.teams[1]}`, { auth }));
+    expect(suggestions.length).toBeGreaterThan(0);
+  });
+
   it('開発の PC では、選んだ立場のテスト用アカウントでログインでき、名前に（テスト）が付く', async () => {
     const t = await makeTournament(2);
     const res = await req('POST', '/api/dev/login-as', { body: { persona: 'coach-a' }, env: dev });

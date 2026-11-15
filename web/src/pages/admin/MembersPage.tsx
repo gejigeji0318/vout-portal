@@ -5,6 +5,7 @@ import { TeamsTab } from './TeamsTab';
 import { UsersTab } from './UsersTab';
 import { InquiriesTab } from './InquiriesTab';
 import { SelectionTab } from './SelectionTab';
+import { ScheduleTab } from './ScheduleTab';
 
 /** SC-18 大会・メンバー管理（応募・選考のタブは段階 3 で追加） */
 export function MembersPage() {
@@ -19,12 +20,14 @@ export function MembersPage() {
           <Tabs.Tab value="teams">チーム</Tabs.Tab>
           <Tabs.Tab value="users">ユーザー</Tabs.Tab>
           <Tabs.Tab value="selection">応募・選考</Tabs.Tab>
+          <Tabs.Tab value="schedule">予定表の日程</Tabs.Tab>
           <Tabs.Tab value="inquiries">問い合わせ対応</Tabs.Tab>
         </Tabs.List>
         <Tabs.Panel value="tournament"><TournamentTab /></Tabs.Panel>
         <Tabs.Panel value="teams"><TeamsTab /></Tabs.Panel>
         <Tabs.Panel value="users"><UsersTab /></Tabs.Panel>
         <Tabs.Panel value="selection"><SelectionTab /></Tabs.Panel>
+        <Tabs.Panel value="schedule"><ScheduleTab /></Tabs.Panel>
         <Tabs.Panel value="inquiries"><InquiriesTab /></Tabs.Panel>
       </Tabs>
     </Stack>

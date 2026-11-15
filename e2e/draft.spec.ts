@@ -1,3 +1,4 @@
+import './no-page-errors';
 import { expect, type Page, test } from '@playwright/test';
 import { asPersona } from './helpers';
 
@@ -17,6 +18,10 @@ test('ドラフト 1 回分：同時に指名 → 被り → ルーレット →
   // 参加受付 → 両チームが参加 → 開始
   await admin.page.goto('/admin/draft');
   await admin.page.getByRole('button', { name: '参加受付を開始' }).click();
+  // ドラフトの期間に入ると、コーチの画面の上部に帯が出る
+  await expect(admin.page.getByText(/チーム中0チームが参加済み/)).toBeVisible();
+  await a.page.goto('/');
+  await expect(a.page.getByText('ドラフトの期間です')).toBeVisible();
   for (const c of [a, b]) {
     await c.page.goto('/draft');
     await c.page.getByRole('button', { name: '参加する' }).click();
@@ -67,6 +72,10 @@ test('ドラフト 1 回分：同時に指名 → 被り → ルーレット →
   await admin.page.getByRole('button', { name: '結果を確定' }).click();
   await admin.page.getByRole('button', { name: '確定する' }).click();
   await expect(admin.page.getByText('チームへの振り分けを確定しました')).toBeVisible();
+  // 結果を確定すると、ドラフトの期間は終わり、帯も消える
+  await a.page.goto('/');
+  await expect(a.page.getByRole('heading', { level: 1 }).first()).toBeVisible();
+  await expect(a.page.getByText('ドラフトの期間です')).toHaveCount(0);
 });
 
 test('ドラフトの画面は、選手には見られない。配信用 URL の鍵が違うと見られない', async ({ browser }) => {

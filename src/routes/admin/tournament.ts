@@ -104,7 +104,7 @@ tournamentAdmin.get('/teams', async (c) => {
   const cur = await getCurrentTournament(c.env.DB);
   if (!cur) return c.json({ teams: [] });
   const { results } = await c.env.DB.prepare(
-    `SELECT t.id, t.name,
+    `SELECT t.id, t.name, t.intro_published_at,
        (SELECT COUNT(*) FROM tournament_members m WHERE m.team_id = t.id AND m.member_type = 'coach' AND m.deleted_at IS NULL) AS coaches,
        (SELECT COUNT(*) FROM tournament_members m WHERE m.team_id = t.id AND m.member_type = 'player' AND m.deleted_at IS NULL) AS players
      FROM teams t WHERE t.tournament_id = ? AND t.deleted_at IS NULL ORDER BY t.created_at`,
@@ -163,5 +163,14 @@ tournamentAdmin.delete('/events/:id', async (c) => {
   const r = await c.env.DB.prepare('DELETE FROM events WHERE id = ?').bind(c.req.param('id')).run();
   if (!r.meta.changes) throw new HttpError(404, 'not_found');
   await writeAudit(c.env.DB, c.get('user')!.id, 'event_delete', { type: 'event', id: c.req.param('id') });
+  return c.json({ ok: true });
+});
+
+/** チーム紹介の公開・非公開（F-12） */
+tournamentAdmin.put('/teams/:id/intro', async (c) => {
+  const b = (await c.req.json().catch(() => ({}))) as Record<string, unknown>;
+  const r = await c.env.DB.prepare('UPDATE teams SET intro_published_at = ?, updated_at = ? WHERE id = ? AND deleted_at IS NULL').bind(b.published === true ? nowIso() : null, nowIso(), c.req.param('id')).run();
+  if (!r.meta.changes) throw new HttpError(404, 'not_found');
+  await writeAudit(c.env.DB, c.get('user')!.id, b.published === true ? 'team_intro_publish' : 'team_intro_unpublish', { type: 'team', id: c.req.param('id') });
   return c.json({ ok: true });
 });

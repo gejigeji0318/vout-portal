@@ -30,6 +30,9 @@ export async function apiUpload<T = unknown>(path: string, file: Blob, filename:
 
 export interface Me {
   loggedIn: boolean;
+  preview?: { memberType: string | null; teamId: string | null } | null;
+  tournamentActive?: boolean;
+  draftOpen?: boolean;
   csrfToken?: string;
   user?: {
     id: string; displayName: string; discordName: string; bio: string | null; streamUrls: string[]; xAccount: string | null; iconUrl: string | null;

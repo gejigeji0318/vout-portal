@@ -1,4 +1,4 @@
-import { Anchor, Box, Container, Group, Loader, Text } from '@mantine/core';
+import { Anchor, Box, Button, Container, Group, Loader, Modal, Select, Stack, Text } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { Navigate, NavLink, Outlet } from 'react-router';
 import { api } from '../api';
@@ -39,6 +39,7 @@ export function AdminLayout() {
             </Group>
             <Group gap="md">
               <Text size="sm" c="#d5d9e0">{me?.user?.displayName}（{ADMIN_LEVEL[level]}）</Text>
+              <PreviewButton />
               <Anchor href="/" c="#d5d9e0" size="sm">ポータルに戻る</Anchor>
             </Group>
           </Group>
@@ -46,5 +47,29 @@ export function AdminLayout() {
       </Box>
       <Container size="xl" py="xl" component="main"><Outlet context={{ adminLevel: level } satisfies AdminContext} /></Container>
     </Box>
+  );
+}
+
+/** 参加者の見え方を確認する（見るだけ。1 時間で終わる） */
+function PreviewButton() {
+  const [open, setOpen] = useState(false);
+  const [as, setAs] = useState('player');
+  const [teams, setTeams] = useState<{ id: string; name: string | null }[]>([]);
+  const [teamId, setTeamId] = useState<string | null>(null);
+  useEffect(() => { if (open) api<{ teams: { id: string; name: string | null }[] }>('GET', '/api/admin/teams').then((r) => { setTeams(r.teams); setTeamId(r.teams[0]?.id ?? null); }).catch(() => {}); }, [open]);
+  const start = async () => { await api('POST', '/api/preview/start', { as, teamId }); window.location.href = '/'; };
+  const needTeam = as === 'player' || as === 'coach';
+  return (
+    <>
+      <Button size="compact-xs" variant="white" color="dark" onClick={() => setOpen(true)}>参加者の見え方を確認</Button>
+      <Modal opened={open} onClose={() => setOpen(false)} title="参加者の見え方を確認（プレビュー）">
+        <Stack>
+          <Text size="sm">選んだ立場の人に、ポータルがどう見えるかを確認できます。プレビュー中は見るだけで、操作はできません。1 時間で自動的に終わります。</Text>
+          <Select label="立場" value={as} onChange={(v) => v && setAs(v)} allowDeselect={false} data={[{ value: 'viewer', label: '登録済み閲覧者' }, { value: 'player', label: '選手' }, { value: 'coach', label: 'コーチ' }, { value: 'staff', label: '補助スタッフ' }]} />
+          {needTeam && <Select label="チーム" value={teamId} onChange={setTeamId} data={teams.map((t, i) => ({ value: t.id, label: t.name ?? `チーム ${i + 1}` }))} />}
+          <Group justify="flex-end"><Button variant="default" onClick={() => setOpen(false)}>やめる</Button><Button onClick={start} disabled={needTeam && !teamId}>プレビューを始める</Button></Group>
+        </Stack>
+      </Modal>
+    </>
   );
 }

@@ -6,6 +6,7 @@ import { api, ApiError } from '../../api';
 import type { AdminContext } from '../../components/AdminLayout';
 import { AUDIT_ACTION, fromInputDate, NOTIFICATION_KIND, showDateTime } from '../../labels';
 import { done, fail } from './shared';
+import { ApprovalsTab, FillSettingsTab } from './GovernanceTabs';
 
 /** SC-19 システム設定（全体管理者のみ）。二人承認・大会終了のタブは段階 6 で追加 */
 export function SystemPage() {
@@ -19,9 +20,13 @@ export function SystemPage() {
         <Tabs.List mb="lg">
           <Tabs.Tab value="notify">Discord 通知</Tabs.Tab>
           <Tabs.Tab value="logs">操作ログ</Tabs.Tab>
+          <Tabs.Tab value="approvals">二人承認・大会終了</Tabs.Tab>
+          <Tabs.Tab value="fill">人員補充</Tabs.Tab>
         </Tabs.List>
         <Tabs.Panel value="notify"><NotificationsTab /></Tabs.Panel>
         <Tabs.Panel value="logs"><AuditLogTab /></Tabs.Panel>
+        <Tabs.Panel value="approvals"><ApprovalsTab /></Tabs.Panel>
+        <Tabs.Panel value="fill"><FillSettingsTab /></Tabs.Panel>
       </Tabs>
     </Stack>
   );
